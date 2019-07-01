@@ -133,6 +133,9 @@ int execute(const char fmt[], ...)
 	va_list vlist;
 	int rc;
 
+  memset( cmd, '\0', sizeof(char)*QUERYMAXLEN );
+  debug(LOG_ERR, "HELLO");
+
 	va_start(vlist, fmt);
 	rc = vsnprintf(cmd, sizeof(cmd), fmt, vlist);
 	va_end(vlist);
