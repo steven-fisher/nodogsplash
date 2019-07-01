@@ -89,6 +89,9 @@ static int _execute_ret(char* msg, int msg_len, const char *cmd)
 
 	debug(LOG_DEBUG, "Executing command: %s", cmd);
 
+  debug(LOG_DEBUG, "cmd length: %d", strlen(cmd));
+
+
 	/* Temporarily get rid of SIGCHLD handler (see main.c), until child exits. */
 	debug(LOG_DEBUG,"Setting default SIGCHLD handler SIG_DFL");
 	sa.sa_handler = SIG_DFL;
