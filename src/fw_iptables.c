@@ -382,7 +382,7 @@ iptables_fw_init(void)
 	LOCK_CONFIG();
 	config = config_get_config();
 	gw_interface = safe_strdup(config->gw_interface); /* must free */
-	
+
 	/* ip4 vs ip6 differences */
 	const char *ICMP_TYPE;
 	if (config->ip6) {
@@ -393,7 +393,7 @@ iptables_fw_init(void)
 		gw_ip = safe_strdup(config->gw_ip);    /* must free */
 		ICMP_TYPE = "icmp";
 	}
-	
+
 	gw_address = safe_strdup(config->gw_address);    /* must free */
 	gw_iprange = safe_strdup(config->gw_iprange);    /* must free */
 	gw_port = config->gw_port;
@@ -497,7 +497,7 @@ iptables_fw_init(void)
 	 * Set up nat table chains and rules (ip4 only)
 	 *
 	 */
-	 
+
 	if (!config->ip6) {
 		/* Create new chains in nat table */
 		rc |= iptables_do_command("-t nat -N " CHAIN_OUTGOING);
@@ -796,6 +796,8 @@ iptables_fw_destroy_mention(
 	config = config_get_config();
 	iptables = config->ip6 ? "ip6tables" : "iptables";
 	safe_asprintf(&command, "%s -t %s -L %s -n --line-numbers -v", iptables, table, chain);
+
+  debug(LOG_DEBUG, "Command %s", command);
 
 	if ((p = popen(command, "r"))) {
 		/* Skip first 2 lines */
