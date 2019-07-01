@@ -189,7 +189,7 @@ iptables_do_command(const char *format, ...)
 
 	config = config_get_config();
 
-	iptables = config->ip6 ? "ip6tables" : "iptables";
+	iptables = config->ip6 ? "exec ip6tables" : "exec iptables";
 
 	for (i = 0; i < 5; i++) {
 		if (fw_quiet) {
@@ -350,7 +350,7 @@ int get_iptables_version()
 
 	rc = execute_ret(buf, sizeof(buf), "iptables -V");
 
-	if (rc == 0 && sscanf(buf, "iptables v%d.%d.%d", &major, &minor, &patch) == 3) {
+	if (rc == 0 && sscanf(buf, "exec iptables v%d.%d.%d", &major, &minor, &patch) == 3) {
 		return major * 10000 + minor * 100 + patch;
 	} else {
 		return -1;
@@ -794,7 +794,7 @@ iptables_fw_destroy_mention(
 	debug(LOG_DEBUG, "Checking all mention of %s from %s.%s", mention, table, chain);
 
 	config = config_get_config();
-	iptables = config->ip6 ? "ip6tables" : "iptables";
+	iptables = config->ip6 ? "exec ip6tables" : "exec iptables";
 	safe_asprintf(&command, "%s -t %s -L %s -n --line-numbers -v", iptables, table, chain);
 
   debug(LOG_DEBUG, "Command %s", command);
@@ -916,7 +916,7 @@ iptables_fw_total_upload()
 	unsigned long long int counter;
 
 	/* Look for outgoing traffic */
-	script = "iptables -v -n -x -t mangle -L PREROUTING";
+	script = "exec iptables -v -n -x -t mangle -L PREROUTING";
 	output = popen(script, "r");
 	if (!output) {
 		debug(LOG_ERR, "popen(): %s", strerror(errno));
@@ -954,7 +954,7 @@ iptables_fw_total_download()
 	unsigned long long int counter;
 
 	/* Look for incoming traffic */
-	script = "iptables -v -n -x -t mangle -L POSTROUTING";
+	script = "exec iptables -v -n -x -t mangle -L POSTROUTING";
 	output = popen(script, "r");
 	if (!output) {
 		debug(LOG_ERR, "popen(): %s", strerror(errno));
@@ -1000,7 +1000,7 @@ iptables_fw_counters_update(void)
 	af = config->ip6 ? AF_INET6 : AF_INET;
 
 	/* Look for outgoing traffic of authenticated clients. */
-	safe_asprintf(&script, "%s %s", "iptables", "-v -n -x -t mangle -L " CHAIN_OUTGOING);
+	safe_asprintf(&script, "%s %s", "exec iptables", "-v -n -x -t mangle -L " CHAIN_OUTGOING);
 	output = popen(script, "r");
 	free(script);
 	if (!output) {
@@ -1039,7 +1039,7 @@ iptables_fw_counters_update(void)
 	pclose(output);
 
 	/* Look for incoming traffic */
-	safe_asprintf(&script, "%s %s", "iptables", "-v -n -x -t mangle -L " CHAIN_INCOMING);
+	safe_asprintf(&script, "%s %s", "exec iptables", "-v -n -x -t mangle -L " CHAIN_INCOMING);
 	output = popen(script, "r");
 	free(script);
 	if (!output) {
