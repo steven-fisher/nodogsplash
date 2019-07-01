@@ -350,7 +350,7 @@ int get_iptables_version()
 
 	rc = execute_ret(buf, sizeof(buf), "iptables -V");
 
-	if (rc == 0 && sscanf(buf, "exec iptables v%d.%d.%d", &major, &minor, &patch) == 3) {
+	if (rc == 0 && sscanf(buf, "iptables v%d.%d.%d", &major, &minor, &patch) == 3) {
 		return major * 10000 + minor * 100 + patch;
 	} else {
 		return -1;
