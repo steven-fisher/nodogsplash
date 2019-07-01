@@ -794,7 +794,7 @@ iptables_fw_destroy_mention(
 	debug(LOG_DEBUG, "Checking all mention of %s from %s.%s", mention, table, chain);
 
 	config = config_get_config();
-	iptables = config->ip6 ? "exec ip6tables" : "exec iptables";
+	iptables = config->ip6 ? "exec ip6tables --wait" : "exec iptables --wait";
 	safe_asprintf(&command, "%s -t %s -L %s -n --line-numbers -v", iptables, table, chain);
 
   debug(LOG_DEBUG, "Command %s", command);
@@ -916,7 +916,7 @@ iptables_fw_total_upload()
 	unsigned long long int counter;
 
 	/* Look for outgoing traffic */
-	script = "exec iptables -v -n -x -t mangle -L PREROUTING";
+	script = "exec iptables --wait -v -n -x -t mangle -L PREROUTING";
 	output = popen(script, "r");
 	if (!output) {
 		debug(LOG_ERR, "popen(): %s", strerror(errno));
@@ -954,7 +954,7 @@ iptables_fw_total_download()
 	unsigned long long int counter;
 
 	/* Look for incoming traffic */
-	script = "exec iptables -v -n -x -t mangle -L POSTROUTING";
+	script = "exec iptables --wait -v -n -x -t mangle -L POSTROUTING";
 	output = popen(script, "r");
 	if (!output) {
 		debug(LOG_ERR, "popen(): %s", strerror(errno));
@@ -1000,7 +1000,7 @@ iptables_fw_counters_update(void)
 	af = config->ip6 ? AF_INET6 : AF_INET;
 
 	/* Look for outgoing traffic of authenticated clients. */
-	safe_asprintf(&script, "%s %s", "exec iptables", "-v -n -x -t mangle -L " CHAIN_OUTGOING);
+	safe_asprintf(&script, "%s %s", "exec iptables --wait", "-v -n -x -t mangle -L " CHAIN_OUTGOING);
 	output = popen(script, "r");
 	free(script);
 	if (!output) {
@@ -1039,7 +1039,7 @@ iptables_fw_counters_update(void)
 	pclose(output);
 
 	/* Look for incoming traffic */
-	safe_asprintf(&script, "%s %s", "exec iptables", "-v -n -x -t mangle -L " CHAIN_INCOMING);
+	safe_asprintf(&script, "%s %s", "exec iptables --wait", "-v -n -x -t mangle -L " CHAIN_INCOMING);
 	output = popen(script, "r");
 	free(script);
 	if (!output) {
